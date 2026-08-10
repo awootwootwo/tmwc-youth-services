@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { listActiveServices } from "@/lib/services";
 import { RequestForm } from "./request-form";
 
@@ -23,7 +22,7 @@ export default async function Home() {
           <a href="#home">Home</a>
           <a href="#services">Services</a>
           <a href="#request">Request</a>
-          <Link href="/login">Staff</Link>
+          <a href="/login">Staff</a>
         </nav>
       </header>
 

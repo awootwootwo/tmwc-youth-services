@@ -1,15 +1,14 @@
-import Link from "next/link";
 import { LoginForm } from "./login-form";
 
 export default function LoginPage() {
   return (
     <main className="site-shell auth-shell">
       <header className="site-header">
-        <Link className="brand text-brand" href="/">
+        <a className="brand text-brand" href="/">
           TMWC Youth Services
-        </Link>
+        </a>
         <nav aria-label="Primary navigation">
-          <Link href="/">Home</Link>
+          <a href="/">Home</a>
         </nav>
       </header>
 

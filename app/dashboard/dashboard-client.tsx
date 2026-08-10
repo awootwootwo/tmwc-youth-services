@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { REQUEST_STATUSES } from "@/lib/security";
@@ -95,12 +94,12 @@ export function DashboardClient() {
   return (
     <main className="site-shell dashboard-shell">
       <header className="site-header">
-        <Link className="brand text-brand" href="/">
+        <a className="brand text-brand" href="/">
           TMWC Youth Services
-        </Link>
+        </a>
         <nav aria-label="Dashboard navigation">
-          <Link href="/">Home</Link>
-          {role === "admin" ? <Link href="/admin/services">Services</Link> : null}
+          <a href="/">Home</a>
+          {role === "admin" ? <a href="/admin/services">Services</a> : null}
           <button className="nav-button" type="button" onClick={signOut}>
             Sign out
           </button>

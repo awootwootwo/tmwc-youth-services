@@ -1,5 +1,10 @@
 .next/
+.vinext/
 .wrangler/
 dist/
 node_modules/
 npm-debug.log*
+Journal-Documentation.odt
+.env
+.env.*
+!.env.example

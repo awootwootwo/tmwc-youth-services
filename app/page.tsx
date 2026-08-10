@@ -1,6 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
+import { listActiveServices } from "@/lib/services";
+import { RequestForm } from "./request-form";
 
-export default function Home() {
+export default async function Home() {
+  const services = await listActiveServices();
+
   return (
     <main className="site-shell">
       <header className="site-header">
@@ -17,19 +22,28 @@ export default function Home() {
         <nav aria-label="Primary navigation">
           <a href="#home">Home</a>
           <a href="#services">Services</a>
-          <a href="#contact">Contact</a>
+          <a href="#request">Request</a>
+          <Link href="/login">Staff</Link>
         </nav>
       </header>
 
       <section className="hero" id="home">
         <div>
-          <p className="eyebrow">Youth Business Idea Test</p>
+          <p className="eyebrow">Youth Service MVP</p>
           <h1>Serving people with purpose, faith, and practical action.</h1>
           <p className="hero-copy">
-            A simple home for youth service ideas at The Master's Work Church,
+            A simple home for youth-led services at The Master&apos;s Work Church,
             focused on using time, energy, and resources to serve others and
-            share the gospel.
+            share the Gospel.
           </p>
+          <div className="hero-actions">
+            <a className="primary-link" href="#request">
+              Request a service
+            </a>
+            <a className="secondary-link" href="#services">
+              View services
+            </a>
+          </div>
         </div>
       </section>
 
@@ -39,15 +53,16 @@ export default function Home() {
           <p>
             We share what God has given us and use it to serve other people.
             Money is not the goal; it is one of the resources that helps carry
-            out the mission. Energy, time, and money are used in service, and
-            growth matters when it helps the work move forward.
+            out the mission. The focus is serving people, stewarding gifts well,
+            and sharing the Gospel with or without payment.
           </p>
         </article>
         <article className="panel">
           <h2>Vision</h2>
           <p>
-            To grow youth-led ideas into faithful, useful services that bless
-            people, build responsibility, and keep the mission at the center.
+            To help TMWC Youth use their God-given gifts in practical ways that
+            bless people, build responsibility, and support the ministry&apos;s
+            mission.
           </p>
         </article>
       </section>
@@ -58,49 +73,30 @@ export default function Home() {
           <h2>Ways youth can serve</h2>
         </div>
         <div className="service-grid">
-          <article className="panel">
-            <h3>Community Help</h3>
-            <p>
-              Practical support projects for people who need encouragement,
-              assistance, or a helpful hand.
-            </p>
-          </article>
-          <article className="panel">
-            <h3>Business Ideas</h3>
-            <p>
-              Small youth-led service concepts that teach stewardship,
-              responsibility, and care for others.
-            </p>
-          </article>
-          <article className="panel">
-            <h3>Church Support</h3>
-            <p>
-              Volunteer work that supports ministry, events, outreach, and the
-              everyday needs of the church family.
-            </p>
-          </article>
+          {services.map((service) => (
+            <article className="panel" key={service.id}>
+              <h3>{service.title}</h3>
+              <p>{service.description}</p>
+            </article>
+          ))}
         </div>
       </section>
 
-      <section className="content-section contact-section" id="contact">
+      <section className="content-section request-section" id="request">
         <div className="section-heading">
-          <p className="eyebrow">Contact</p>
-          <h2>Get in touch</h2>
+          <p className="eyebrow">Request</p>
+          <h2>Ask about a service</h2>
+          <p>
+            Share only the details needed for the team to respond. A staff
+            member will review the request before confirming availability,
+            pricing, date, and assigned youth staff.
+          </p>
         </div>
-        <div className="service-grid two-column">
-          <article className="panel">
-            <h3>Contact Info</h3>
-            <p>Email / Phone Placeholder</p>
-          </article>
-          <article className="panel">
-            <h3>Working Hours</h3>
-            <p>Mon - Fri: 9am - 5pm</p>
-          </article>
-        </div>
+        <RequestForm services={services} />
       </section>
 
       <footer>
-        <p>&copy; 2016 The Master's Work Church. All rights reserved.</p>
+        <p>&copy; 2026 The Master&apos;s Work Church. All rights reserved.</p>
       </footer>
     </main>
   );

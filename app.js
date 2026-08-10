@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!response.ok) throw new Error('Module failed to load.');
       const html = await response.text();
       contentArea.innerHTML = html;
-    } catch (error) {
+    } catch {
       contentArea.innerHTML = `<div class="box"><p>Error loading content.</p></div>`;
     }
   }

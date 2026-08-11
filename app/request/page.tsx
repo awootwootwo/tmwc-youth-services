@@ -1,4 +1,5 @@
 import { listActiveServices } from "@/lib/services";
+import { SiteNav } from "../landing-nav";
 import { RequestForm } from "../request-form";
 
 export default async function RequestPage() {
@@ -10,11 +11,7 @@ export default async function RequestPage() {
         <a className="brand text-brand" href="/">
           Church Connect
         </a>
-        <nav aria-label="Primary navigation">
-          <a href="/">Home</a>
-          <a href="/request">Request Service</a>
-          <a href="/dashboard">Sign In</a>
-        </nav>
+        <SiteNav />
       </header>
 
       <section className="content-section request-section">

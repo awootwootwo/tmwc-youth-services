@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getSiteContent, listActiveServices } from "@/lib/services";
+import { SiteNav } from "./landing-nav";
 import { WelcomeModal } from "./welcome-modal";
 
 export default async function Home() {
@@ -20,12 +21,7 @@ export default async function Home() {
           />
           <span>TMWC Youth Services</span>
         </a>
-        <nav aria-label="Primary navigation">
-          <a href="#home">Home</a>
-          <a href="#services">Services</a>
-          <a href="/request">Request Service</a>
-          <a href="/dashboard">Staff</a>
-        </nav>
+        <SiteNav />
       </header>
 
       <section className="hero" id="home">

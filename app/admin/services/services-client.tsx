@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import type { Service } from "@/lib/supabase/types";
+import { SiteNav } from "../../landing-nav";
 
 type ServicesResponse = {
   services: Service[];
@@ -201,10 +202,7 @@ export function ServicesClient() {
         <a className="brand text-brand" href="/">
           TMWC Youth Services
         </a>
-        <nav aria-label="Admin navigation">
-          <a href="/">Home</a>
-          <a href="/dashboard">Requests</a>
-        </nav>
+        <SiteNav />
       </header>
 
       <section className="content-section">

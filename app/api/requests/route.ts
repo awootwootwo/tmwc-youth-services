@@ -44,7 +44,14 @@ export async function GET(request: Request) {
     );
   }
 
-  return NextResponse.json({ requests: data ?? [], role: auth.profile.role });
+  return NextResponse.json({
+    requests: data ?? [],
+    role: auth.profile.role,
+    profile: {
+      display_name: auth.profile.display_name,
+      email: auth.profile.email,
+    },
+  });
 }
 
 export async function POST(request: Request) {

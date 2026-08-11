@@ -11,6 +11,7 @@ import {
 import { REQUEST_STATUSES } from "@/lib/security";
 import { defaultSiteContent } from "@/lib/services";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { SiteNav } from "../landing-nav";
 import type {
   Profile,
   RequestStatus,
@@ -242,11 +243,6 @@ export function DashboardClient() {
     await loadAdminData();
   }
 
-  async function signOut() {
-    await supabase?.auth.signOut();
-    router.push("/login");
-  }
-
   useEffect(() => {
     const timer = window.setTimeout(() => {
       void loadRequests();
@@ -270,14 +266,7 @@ export function DashboardClient() {
         <a className="brand text-brand" href="/">
           Church Connect
         </a>
-        <nav aria-label="Dashboard navigation">
-          <a href="/">Home</a>
-          <a href="/request">Request Service</a>
-          {role === "admin" ? <a href="/dashboard">Admin</a> : null}
-          <button className="nav-button" type="button" onClick={signOut}>
-            Logout
-          </button>
-        </nav>
+        <SiteNav />
       </header>
 
       <section className="content-section admin-dashboard">

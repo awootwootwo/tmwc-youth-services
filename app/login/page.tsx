@@ -1,4 +1,5 @@
 import { LoginForm } from "./login-form";
+import { SiteNav } from "../landing-nav";
 
 export default function LoginPage() {
   return (
@@ -7,9 +8,7 @@ export default function LoginPage() {
         <a className="brand text-brand" href="/">
           Church Connect
         </a>
-        <nav aria-label="Primary navigation">
-          <a href="/">Home</a>
-        </nav>
+        <SiteNav />
       </header>
 
       <section className="content-section narrow-section">

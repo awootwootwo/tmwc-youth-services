@@ -14,6 +14,7 @@ export function SiteNav() {
   const router = useRouter();
   const pathname = usePathname();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [sessionState, setSessionState] = useState<SessionState | null>(null);
 
   useEffect(() => {
@@ -24,7 +25,10 @@ export function SiteNav() {
       const token = data?.session?.access_token;
 
       if (!token) {
-        if (isMounted) setSessionState(null);
+        if (isMounted) {
+          setSessionState(null);
+          setIsCheckingSession(false);
+        }
         return;
       }
 
@@ -35,7 +39,10 @@ export function SiteNav() {
       }).catch(() => null);
 
       if (!response?.ok) {
-        if (isMounted) setSessionState(null);
+        if (isMounted) {
+          setSessionState(null);
+          setIsCheckingSession(false);
+        }
         return;
       }
 
@@ -50,6 +57,7 @@ export function SiteNav() {
           name: result.profile?.display_name || emailName,
           role: result.role,
         });
+        setIsCheckingSession(false);
       }
     }
 
@@ -68,6 +76,7 @@ export function SiteNav() {
   async function signOut() {
     await supabase?.auth.signOut();
     setSessionState(null);
+    setIsCheckingSession(false);
     router.refresh();
   }
 
@@ -75,8 +84,15 @@ export function SiteNav() {
     <nav aria-label="Primary navigation">
       <a href={pathname === "/" ? "#home" : "/"}>Home</a>
       <a href="/request">Request Service</a>
-      {sessionState ? (
-        <>
+      <span className="nav-session-slot">
+        {isCheckingSession ? (
+          <>
+            <span className="nav-placeholder">Admin</span>
+            <span className="nav-user nav-placeholder">Staff Member</span>
+            <span className="nav-button nav-placeholder">Logout</span>
+          </>
+        ) : sessionState ? (
+          <>
           <a href="/dashboard">
             {sessionState.role === "admin" ? "Admin" : "Staff"}
           </a>
@@ -88,12 +104,13 @@ export function SiteNav() {
           >
             Logout
           </button>
-        </>
-      ) : (
-        <a className="nav-sign-in" href="/login">
-          Sign In
-        </a>
-      )}
+          </>
+        ) : (
+          <a className="nav-sign-in" href="/login">
+            Sign In
+          </a>
+        )}
+      </span>
     </nav>
   );
 }

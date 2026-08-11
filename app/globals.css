@@ -104,6 +104,28 @@ nav a {
   padding: 8px 4px;
 }
 
+.nav-session-slot {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.nav-placeholder {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.94rem;
+  padding: 8px 14px;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.nav-user.nav-placeholder {
+  border-color: transparent;
+  padding-inline: 4px;
+}
+
 .nav-logout {
   color: #b42318;
 }
@@ -605,6 +627,10 @@ textarea {
 
   .nav-button {
     flex: 1 1 96px;
+  }
+
+  .nav-session-slot {
+    width: 100%;
   }
 
   .hero {

@@ -81,7 +81,11 @@ export function SiteNav() {
             {sessionState.role === "admin" ? "Admin" : "Staff"}
           </a>
           <span className="nav-user">{sessionState.name}</span>
-          <button className="nav-button" type="button" onClick={signOut}>
+          <button
+            className="nav-button nav-logout"
+            type="button"
+            onClick={signOut}
+          >
             Logout
           </button>
         </>

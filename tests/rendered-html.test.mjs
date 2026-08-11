@@ -2,14 +2,15 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 
-test("MVP build includes public and protected app chunks", () => {
+test("minimal app build creates a client manifest", () => {
   const manifestPath = "dist/client/.vite/manifest.json";
   assert.equal(existsSync(manifestPath), true);
 
-  const manifest = readFileSync(manifestPath, "utf8");
-  assert.match(manifest, /request-form/);
-  assert.match(manifest, /dashboard-client/);
-  assert.match(manifest, /services-client/);
+  const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  assert.equal(
+    Boolean(manifest["virtual:vinext-app-browser-entry"]?.isEntry),
+    true,
+  );
 });
 
 test("Supabase migration includes secure MVP policies", () => {

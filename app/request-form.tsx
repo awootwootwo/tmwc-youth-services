@@ -1,10 +1,12 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 
 type ServiceOption = {
   id: string;
   title: string;
+  icon?: string | null;
+  service_activities?: { id: string; name: string }[];
 };
 
 type SubmitState =
@@ -15,9 +17,28 @@ type SubmitState =
 export function RequestForm({ services }: { services: ServiceOption[] }) {
   const [state, setState] = useState<SubmitState>({ status: "idle", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedServiceId, setSelectedServiceId] = useState(
+    services[0]?.id ?? "",
+  );
+  const [selectedActivityId, setSelectedActivityId] = useState("");
+  const hasServices = services.length > 0;
+
+  const selectedService = useMemo(
+    () => services.find((service) => service.id === selectedServiceId),
+    [selectedServiceId, services],
+  );
+  const activities = selectedService?.service_activities ?? [];
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!hasServices) {
+      setState({
+        status: "error",
+        message: "No services are available for requests right now.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setState({ status: "idle", message: "" });
 
@@ -31,11 +52,14 @@ export function RequestForm({ services }: { services: ServiceOption[] }) {
       },
       body: JSON.stringify({
         service_id: formData.get("service_id"),
+        activity_id: formData.get("activity_id"),
         guest_name: formData.get("guest_name"),
-        guest_contact: formData.get("guest_contact"),
+        phone: formData.get("phone"),
+        email: formData.get("email"),
+        messenger_name: formData.get("messenger_name"),
+        preferred_date: formData.get("preferred_date"),
         preferred_time: formData.get("preferred_time"),
         budget: formData.get("budget"),
-        notes: formData.get("notes"),
         consent: formData.get("consent") === "on",
       }),
     });
@@ -54,6 +78,8 @@ export function RequestForm({ services }: { services: ServiceOption[] }) {
     }
 
     form.reset();
+    setSelectedServiceId(services[0]?.id ?? "");
+    setSelectedActivityId("");
     setState({
       status: "success",
       message: "Request sent. The team can now review and respond.",
@@ -64,48 +90,110 @@ export function RequestForm({ services }: { services: ServiceOption[] }) {
   return (
     <form className="request-form" onSubmit={handleSubmit}>
       <label>
-        Service
-        <select name="service_id" required defaultValue="">
-          <option value="" disabled>
-            Choose a service
-          </option>
+        Service *
+        <select
+          name="service_id"
+          required
+          value={selectedServiceId}
+          disabled={!hasServices}
+          onChange={(event) => {
+            setSelectedServiceId(event.currentTarget.value);
+            setSelectedActivityId("");
+          }}
+        >
+          {!hasServices ? (
+            <option value="">No services available</option>
+          ) : null}
           {services.map((service) => (
             <option key={service.id} value={service.id}>
+              {service.icon ? `${service.icon} ` : ""}
               {service.title}
             </option>
           ))}
         </select>
       </label>
 
-      <label>
-        Name
-        <input name="guest_name" required maxLength={120} autoComplete="name" />
-      </label>
+      {activities.length > 0 ? (
+        <fieldset className="activity-picker">
+          <legend>Select activity (optional)</legend>
+          <input name="activity_id" type="hidden" value={selectedActivityId} />
+          <div className="activity-options">
+            {activities.map((activity) => (
+              <button
+                className={
+                  selectedActivityId === activity.id
+                    ? "activity-chip active"
+                    : "activity-chip"
+                }
+                key={activity.id}
+                type="button"
+                onClick={() =>
+                  setSelectedActivityId((current) =>
+                    current === activity.id ? "" : activity.id,
+                  )
+                }
+              >
+                {activity.name}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      ) : null}
 
       <label>
-        Contact information
+        Your name *
         <input
-          name="guest_contact"
+          name="guest_name"
           required
-          maxLength={180}
-          autoComplete="email"
-          placeholder="Phone, email, or Messenger name"
+          maxLength={120}
+          autoComplete="name"
+          placeholder="Full name"
         />
       </label>
 
       <label>
-        Preferred date or time
-        <input name="preferred_time" maxLength={180} />
+        Phone
+        <input
+          name="phone"
+          maxLength={80}
+          autoComplete="tel"
+          placeholder="Phone number"
+        />
       </label>
 
       <label>
-        Budget or willingness to pay
-        <input name="budget" maxLength={120} placeholder="Optional" />
+        Email
+        <input
+          name="email"
+          type="email"
+          maxLength={180}
+          autoComplete="email"
+          placeholder="Email address"
+        />
       </label>
 
       <label>
-        Notes
-        <textarea name="notes" maxLength={800} rows={5} />
+        Messenger name
+        <input
+          name="messenger_name"
+          maxLength={120}
+          placeholder="Messenger / social handle"
+        />
+      </label>
+
+      <label>
+        Preferred date
+        <input name="preferred_date" type="date" />
+      </label>
+
+      <label>
+        Preferred time
+        <input name="preferred_time" type="time" />
+      </label>
+
+      <label>
+        Budget / willingness to pay
+        <input name="budget" maxLength={120} placeholder="e.g. ₱500, Free, Negotiable" />
       </label>
 
       <label className="consent-row">
@@ -116,8 +204,14 @@ export function RequestForm({ services }: { services: ServiceOption[] }) {
         </span>
       </label>
 
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Sending..." : "Send request"}
+      {!hasServices ? (
+        <p className="form-message error">
+          No services available at the moment.
+        </p>
+      ) : null}
+
+      <button type="submit" disabled={isSubmitting || !hasServices}>
+        {isSubmitting ? "Sending..." : "Submit request"}
       </button>
 
       {state.message ? (

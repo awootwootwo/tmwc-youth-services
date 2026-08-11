@@ -1,39 +1,42 @@
 import { createSupabaseAnonClient } from "./supabase/server";
-import type { Service } from "./supabase/types";
 
-export const fallbackServices: Pick<Service, "id" | "title" | "description">[] =
-  [
-    {
-      id: "community-help",
-      title: "Community Help",
-      description:
-        "Practical support projects for people who need encouragement, assistance, or a helpful hand.",
-    },
-    {
-      id: "youth-service-ideas",
-      title: "Youth Service Ideas",
-      description:
-        "Small youth-led service concepts that teach stewardship, responsibility, and care for others.",
-    },
-    {
-      id: "church-support",
-      title: "Church Support",
-      description:
-        "Volunteer work that supports ministry, events, outreach, and the everyday needs of the church family.",
-    },
-  ];
+export const defaultSiteContent = {
+  mission:
+    "We exist to serve our community by providing meaningful services that enrich lives, foster creativity, expand knowledge, and build lasting connections.",
+  vision:
+    "To create a thriving community where faith and service walk hand in hand, empowering people to reach their fullest potential.",
+};
 
 export async function listActiveServices() {
   const supabase = createSupabaseAnonClient();
-  if (!supabase) return fallbackServices;
+  if (!supabase) return [];
 
   const { data, error } = await supabase
     .from("services")
-    .select("id,title,description")
+    .select("id,title,description,icon,service_activities(id,name)")
     .eq("active", true)
     .order("title", { ascending: true });
 
-  if (error || !data?.length) return fallbackServices;
+  if (error) return [];
 
-  return data;
+  return data ?? [];
+}
+
+export async function getSiteContent() {
+  const supabase = createSupabaseAnonClient();
+  if (!supabase) return defaultSiteContent;
+
+  const { data, error } = await supabase
+    .from("site_content")
+    .select("key,value");
+
+  if (error || !data?.length) return defaultSiteContent;
+
+  return data.reduce(
+    (content, item) => ({
+      ...content,
+      [item.key]: item.value,
+    }),
+    defaultSiteContent,
+  );
 }

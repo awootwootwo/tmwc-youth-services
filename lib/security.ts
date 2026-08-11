@@ -6,9 +6,8 @@ const RATE_LIMIT_MAX = 5;
 const requestBuckets = new Map<string, { count: number; resetAt: number }>();
 
 export const REQUEST_STATUSES: RequestStatus[] = [
-  "new",
-  "contacted",
-  "accepted",
+  "pending",
+  "in_progress",
   "declined",
   "completed",
 ];

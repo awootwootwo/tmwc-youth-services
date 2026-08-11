@@ -1,20 +1,37 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 export function LoginForm() {
   const router = useRouter();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function redirectSignedInUser() {
+      const { data } = (await supabase?.auth.getSession()) ?? { data: null };
+      if (isMounted && data?.session) {
+        router.replace("/dashboard");
+      }
+    }
+
+    void redirectSignedInUser();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [router, supabase]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSubmitting(true);
     setMessage("");
 
-    const supabase = createSupabaseBrowserClient();
     if (!supabase) {
       setMessage("Supabase is not configured yet.");
       setIsSubmitting(false);
@@ -23,21 +40,22 @@ export function LoginForm() {
 
     const formData = new FormData(event.currentTarget);
     const email = String(formData.get("email") ?? "");
-    const password = String(formData.get("password") ?? "");
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithOtp({
       email,
-      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/dashboard`,
+      },
     });
 
     if (error) {
-      setMessage("Unable to sign in with those details.");
+      setMessage("Unable to send a sign-in link to that email.");
       setIsSubmitting(false);
       return;
     }
 
-    router.push("/dashboard");
-    router.refresh();
+    setMessage("Check your email for the sign-in link.");
+    setIsSubmitting(false);
   }
 
   return (
@@ -46,19 +64,10 @@ export function LoginForm() {
         Email
         <input name="email" type="email" required autoComplete="email" />
       </label>
-      <label>
-        Password
-        <input
-          name="password"
-          type="password"
-          required
-          autoComplete="current-password"
-        />
-      </label>
       <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Signing in..." : "Sign in"}
+        {isSubmitting ? "Sending link..." : "Send sign-in link"}
       </button>
-      {message ? <p className="form-message error">{message}</p> : null}
+      {message ? <p className="form-message">{message}</p> : null}
     </form>
   );
 }

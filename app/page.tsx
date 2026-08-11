@@ -1,12 +1,15 @@
 import Image from "next/image";
-import { listActiveServices } from "@/lib/services";
-import { RequestForm } from "./request-form";
+import Link from "next/link";
+import { getSiteContent, listActiveServices } from "@/lib/services";
+import { WelcomeModal } from "./welcome-modal";
 
 export default async function Home() {
   const services = await listActiveServices();
+  const content = await getSiteContent();
 
   return (
     <main className="site-shell">
+      <WelcomeModal />
       <header className="site-header">
         <a className="brand" href="#home" aria-label="TMWC Youth Services home">
           <Image
@@ -21,24 +24,23 @@ export default async function Home() {
         <nav aria-label="Primary navigation">
           <a href="#home">Home</a>
           <a href="#services">Services</a>
-          <a href="#request">Request</a>
-          <a href="/login">Staff</a>
+          <Link href="/request">Request Service</Link>
+          <Link href="/dashboard">Staff</Link>
         </nav>
       </header>
 
       <section className="hero" id="home">
         <div>
-          <p className="eyebrow">Youth Service MVP</p>
-          <h1>Serving people with purpose, faith, and practical action.</h1>
+          <p className="eyebrow">Church Connect</p>
+          <h1>Welcome to Our Church Services</h1>
           <p className="hero-copy">
-            A simple home for youth-led services at The Master&apos;s Work Church,
-            focused on using time, energy, and resources to serve others and
-            share the Gospel.
+            Connecting our community through faith, learning, creativity, and
+            service.
           </p>
           <div className="hero-actions">
-            <a className="primary-link" href="#request">
+            <Link className="primary-link" href="/request">
               Request a service
-            </a>
+            </Link>
             <a className="secondary-link" href="#services">
               View services
             </a>
@@ -49,20 +51,11 @@ export default async function Home() {
       <section className="split-section" aria-label="Mission and vision">
         <article className="panel">
           <h2>Mission</h2>
-          <p>
-            We share what God has given us and use it to serve other people.
-            Money is not the goal; it is one of the resources that helps carry
-            out the mission. The focus is serving people, stewarding gifts well,
-            and sharing the Gospel with or without payment.
-          </p>
+          <p>{content.mission}</p>
         </article>
         <article className="panel">
           <h2>Vision</h2>
-          <p>
-            To help TMWC Youth use their God-given gifts in practical ways that
-            bless people, build responsibility, and support the ministry&apos;s
-            mission.
-          </p>
+          <p>{content.vision}</p>
         </article>
       </section>
 
@@ -71,27 +64,27 @@ export default async function Home() {
           <p className="eyebrow">Services</p>
           <h2>Ways youth can serve</h2>
         </div>
-        <div className="service-grid">
-          {services.map((service) => (
-            <article className="panel" key={service.id}>
-              <h3>{service.title}</h3>
-              <p>{service.description}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="content-section request-section" id="request">
-        <div className="section-heading">
-          <p className="eyebrow">Request</p>
-          <h2>Ask about a service</h2>
-          <p>
-            Share only the details needed for the team to respond. A staff
-            member will review the request before confirming availability,
-            pricing, date, and assigned youth staff.
-          </p>
-        </div>
-        <RequestForm services={services} />
+        {services.length > 0 ? (
+          <div className="service-grid">
+            {services.map((service) => (
+              <article className="panel" key={service.id}>
+                <p className="service-icon" aria-hidden="true">
+                  {"icon" in service && service.icon ? service.icon : "🤝"}
+                </p>
+                <h3>{service.title}</h3>
+                <p>{service.description}</p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <article className="panel empty-state">
+            <h3>No services available at the moment</h3>
+            <p>
+              Please check again soon. The team is still preparing the service
+              list.
+            </p>
+          </article>
+        )}
       </section>
 
       <footer>

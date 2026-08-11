@@ -20,7 +20,7 @@ export async function GET(request: Request) {
   let query = auth.service
     .from("service_requests")
     .select(
-      "id,service_id,guest_name,guest_contact,preferred_time,notes,budget,status,created_at,updated_at,services(title)",
+      "id,service_id,activity_id,assigned_staff_id,guest_name,guest_contact,phone,email,messenger_name,preferred_date,preferred_time,notes,budget,status,created_at,updated_at,services(title,icon),service_activities(name),profiles(display_name,email)",
     )
     .order("created_at", { ascending: false });
 
@@ -69,13 +69,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const serviceId = requiredText("service_id" in body ? body.service_id : "", "Service", 120);
-  const guestName = requiredText("guest_name" in body ? body.guest_name : "", "Name", 120);
-  const guestContact = requiredText(
-    "guest_contact" in body ? body.guest_contact : "",
-    "Contact information",
-    180,
+  const serviceId = requiredText(
+    "service_id" in body ? body.service_id : "",
+    "Service",
+    120,
   );
+  const guestName = requiredText(
+    "guest_name" in body ? body.guest_name : "",
+    "Name",
+    120,
+  );
+  const phone = optionalText("phone" in body ? body.phone : "", 80);
+  const email = optionalText("email" in body ? body.email : "", 180);
+  const messengerName = optionalText(
+    "messenger_name" in body ? body.messenger_name : "",
+    120,
+  );
+  const guestContact = [phone, email, messengerName].filter(Boolean).join(" / ");
   const consent = "consent" in body ? body.consent : false;
 
   if ("error" in serviceId) {
@@ -84,8 +94,11 @@ export async function POST(request: Request) {
   if ("error" in guestName) {
     return NextResponse.json({ error: guestName.error }, { status: 400 });
   }
-  if ("error" in guestContact) {
-    return NextResponse.json({ error: guestContact.error }, { status: 400 });
+  if (!guestContact) {
+    return NextResponse.json(
+      { error: "Please provide phone, email, or Messenger name." },
+      { status: 400 },
+    );
   }
   if (consent !== true) {
     return NextResponse.json(
@@ -96,8 +109,13 @@ export async function POST(request: Request) {
 
   const { error } = await supabase.from("service_requests").insert({
     service_id: serviceId.value,
+    activity_id: optionalText("activity_id" in body ? body.activity_id : "", 120),
     guest_name: guestName.value,
-    guest_contact: guestContact.value,
+    guest_contact: guestContact,
+    phone,
+    email,
+    messenger_name: messengerName,
+    preferred_date: optionalText("preferred_date" in body ? body.preferred_date : "", 20),
     preferred_time: optionalText("preferred_time" in body ? body.preferred_time : "", 180),
     notes: optionalText("notes" in body ? body.notes : ""),
     budget: optionalText("budget" in body ? body.budget : "", 120),

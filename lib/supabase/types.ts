@@ -1,16 +1,25 @@
 export type UserRole = "staff" | "admin";
 
 export type RequestStatus =
-  | "new"
-  | "contacted"
-  | "accepted"
+  | "pending"
+  | "in_progress"
   | "declined"
   | "completed";
 
 export type Service = {
   id: string;
+  icon: string | null;
   title: string;
   description: string;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ServiceActivity = {
+  id: string;
+  service_id: string;
+  name: string;
   active: boolean;
   created_at: string;
   updated_at: string;
@@ -19,15 +28,23 @@ export type Service = {
 export type ServiceRequest = {
   id: string;
   service_id: string;
+  activity_id: string | null;
+  assigned_staff_id: string | null;
   guest_name: string;
   guest_contact: string;
+  phone: string | null;
+  email: string | null;
+  messenger_name: string | null;
+  preferred_date: string | null;
   preferred_time: string | null;
   notes: string | null;
   budget: string | null;
   status: RequestStatus;
   created_at: string;
   updated_at: string;
-  services?: Pick<Service, "title"> | null;
+  services?: Pick<Service, "title" | "icon"> | null;
+  service_activities?: Pick<ServiceActivity, "name"> | null;
+  profiles?: Pick<Profile, "display_name" | "email"> | null;
 };
 
 export type Profile = {
@@ -39,6 +56,12 @@ export type Profile = {
   updated_at: string;
 };
 
+export type SiteContent = {
+  key: "mission" | "vision";
+  value: string;
+  updated_at: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -46,8 +69,18 @@ export type Database = {
         Row: Service;
         Insert: Partial<Pick<Service, "id" | "created_at" | "updated_at">> &
           Pick<Service, "title" | "description"> &
-          Partial<Pick<Service, "active">>;
+          Partial<Pick<Service, "icon" | "active">>;
         Update: Partial<Omit<Service, "id" | "created_at" | "updated_at">>;
+      };
+      service_activities: {
+        Row: ServiceActivity;
+        Insert: Partial<
+          Pick<ServiceActivity, "id" | "active" | "created_at" | "updated_at">
+        > &
+          Pick<ServiceActivity, "service_id" | "name">;
+        Update: Partial<
+          Omit<ServiceActivity, "id" | "service_id" | "created_at" | "updated_at">
+        >;
       };
       service_requests: {
         Row: ServiceRequest;
@@ -55,11 +88,30 @@ export type Database = {
           Pick<ServiceRequest, "id" | "status" | "created_at" | "updated_at">
         > &
           Pick<ServiceRequest, "service_id" | "guest_name" | "guest_contact"> &
-          Partial<Pick<ServiceRequest, "preferred_time" | "notes" | "budget">>;
+          Partial<
+            Pick<
+              ServiceRequest,
+              | "activity_id"
+              | "assigned_staff_id"
+              | "phone"
+              | "email"
+              | "messenger_name"
+              | "preferred_date"
+              | "preferred_time"
+              | "notes"
+              | "budget"
+            >
+          >;
         Update: Partial<
           Pick<
             ServiceRequest,
-            "status" | "preferred_time" | "notes" | "budget" | "updated_at"
+            | "status"
+            | "assigned_staff_id"
+            | "preferred_date"
+            | "preferred_time"
+            | "notes"
+            | "budget"
+            | "updated_at"
           >
         >;
       };
@@ -81,6 +133,11 @@ export type Database = {
           created_at?: string;
         };
         Update: never;
+      };
+      site_content: {
+        Row: SiteContent;
+        Insert: SiteContent;
+        Update: Partial<Pick<SiteContent, "value" | "updated_at">>;
       };
     };
   };

@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { getSiteContent, listActiveServices } from "@/lib/services";
 import { WelcomeModal } from "./welcome-modal";
 
@@ -24,8 +23,8 @@ export default async function Home() {
         <nav aria-label="Primary navigation">
           <a href="#home">Home</a>
           <a href="#services">Services</a>
-          <Link href="/request">Request Service</Link>
-          <Link href="/dashboard">Staff</Link>
+          <a href="/request">Request Service</a>
+          <a href="/dashboard">Staff</a>
         </nav>
       </header>
 
@@ -38,9 +37,9 @@ export default async function Home() {
             service.
           </p>
           <div className="hero-actions">
-            <Link className="primary-link" href="/request">
+            <a className="primary-link" href="/request">
               Request a service
-            </Link>
+            </a>
             <a className="secondary-link" href="#services">
               View services
             </a>

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { listActiveServices } from "@/lib/services";
 import { RequestForm } from "../request-form";
 
@@ -8,13 +7,13 @@ export default async function RequestPage() {
   return (
     <main className="site-shell">
       <header className="site-header">
-        <Link className="brand text-brand" href="/">
-          ⛪ Church Connect
-        </Link>
+        <a className="brand text-brand" href="/">
+          Church Connect
+        </a>
         <nav aria-label="Primary navigation">
-          <Link href="/">Home</Link>
-          <Link href="/request">Request Service</Link>
-          <Link href="/dashboard">Sign In</Link>
+          <a href="/">Home</a>
+          <a href="/request">Request Service</a>
+          <a href="/dashboard">Sign In</a>
         </nav>
       </header>
 

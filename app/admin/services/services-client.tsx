@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
@@ -199,12 +198,12 @@ export function ServicesClient() {
   return (
     <main className="site-shell dashboard-shell">
       <header className="site-header">
-        <Link className="brand text-brand" href="/">
+        <a className="brand text-brand" href="/">
           TMWC Youth Services
-        </Link>
+        </a>
         <nav aria-label="Admin navigation">
-          <Link href="/">Home</Link>
-          <Link href="/dashboard">Requests</Link>
+          <a href="/">Home</a>
+          <a href="/dashboard">Requests</a>
         </nav>
       </header>
 

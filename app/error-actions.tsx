@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 type ErrorActionsProps = {
   reset?: () => void;
 };
@@ -14,12 +12,12 @@ export function ErrorActions({ reset }: ErrorActionsProps) {
           Try again
         </button>
       ) : null}
-      <Link className="secondary-link" href="/">
+      <a className="secondary-link" href="/">
         Go home
-      </Link>
-      <Link className="secondary-link" href="/login">
+      </a>
+      <a className="secondary-link" href="/login">
         Staff sign in
-      </Link>
+      </a>
     </div>
   );
 }

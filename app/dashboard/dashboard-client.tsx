@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   FormEvent,
@@ -268,13 +267,13 @@ export function DashboardClient() {
   return (
     <main className="site-shell dashboard-shell">
       <header className="site-header">
-        <Link className="brand text-brand" href="/">
-          ⛪ Church Connect
-        </Link>
+        <a className="brand text-brand" href="/">
+          Church Connect
+        </a>
         <nav aria-label="Dashboard navigation">
-          <Link href="/">Home</Link>
-          <Link href="/request">Request Service</Link>
-          {role === "admin" ? <Link href="/dashboard">Admin</Link> : null}
+          <a href="/">Home</a>
+          <a href="/request">Request Service</a>
+          {role === "admin" ? <a href="/dashboard">Admin</a> : null}
           <button className="nav-button" type="button" onClick={signOut}>
             Logout
           </button>

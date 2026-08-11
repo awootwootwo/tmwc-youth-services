@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export function WelcomeModal() {
@@ -29,14 +28,14 @@ export function WelcomeModal() {
         role="dialog"
       >
         <p className="modal-icon" aria-hidden="true">
-          ⛪
+          Church
         </p>
         <h2 id="welcome-title">Welcome to Church Connect</h2>
         <p>How would you like to proceed?</p>
         <div className="modal-actions">
-          <Link className="primary-link" href="/login" onClick={closeModal}>
+          <a className="primary-link" href="/login" onClick={closeModal}>
             Staff / Admin Sign In
-          </Link>
+          </a>
           <button className="secondary-button" type="button" onClick={closeModal}>
             Just Visiting
           </button>

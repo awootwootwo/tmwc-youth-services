@@ -40,22 +40,21 @@ export function LoginForm() {
 
     const formData = new FormData(event.currentTarget);
     const email = String(formData.get("email") ?? "");
+    const password = String(formData.get("password") ?? "");
 
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-      },
+      password,
     });
 
     if (error) {
-      setMessage("Unable to send a sign-in link to that email.");
+      setMessage("Unable to sign in with that email and password.");
       setIsSubmitting(false);
       return;
     }
 
-    setMessage("Check your email for the sign-in link.");
-    setIsSubmitting(false);
+    router.push("/dashboard");
+    router.refresh();
   }
 
   return (
@@ -64,10 +63,19 @@ export function LoginForm() {
         Email
         <input name="email" type="email" required autoComplete="email" />
       </label>
+      <label>
+        Password
+        <input
+          name="password"
+          type="password"
+          required
+          autoComplete="current-password"
+        />
+      </label>
       <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Sending link..." : "Send sign-in link"}
+        {isSubmitting ? "Signing in..." : "Sign in"}
       </button>
-      {message ? <p className="form-message">{message}</p> : null}
+      {message ? <p className="form-message error">{message}</p> : null}
     </form>
   );
 }

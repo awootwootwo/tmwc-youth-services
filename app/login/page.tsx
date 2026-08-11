@@ -17,7 +17,7 @@ export default function LoginPage() {
           <p className="eyebrow">Staff Access</p>
           <h1>Staff sign in</h1>
           <p>
-            Enter your registered email to access your dashboard.
+            Enter your registered email and password to access your dashboard.
           </p>
         </div>
         <LoginForm />
